@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaGoogle } from "react-icons/fa";
+import { AuthContext } from '../../Context/AuthProvider';
+import toast from 'react-hot-toast';
 
 const Login = () => {
+    const {userLogin} = useContext(AuthContext)
     const { register,formState: { errors }, handleSubmit} = useForm();
 
     const handleLogin = data =>{
-        console.log(data);
+        // console.log(data);
+        userLogin(data.email, data.password)
+        .then(result =>{
+            const user = result.user;
+            console.log(user)
+            toast.success('Succussfully login')
+        })
+        .catch(err =>{
+            toast.error(err.message);
+        })
     }
     return (
         <div className='h-[600px] flex justify-center items-center'>
@@ -28,7 +40,6 @@ const Login = () => {
                         <input type="password"
                             {...register("password", {
                                 required: "Password is required",
-                                minLength: { value: 6, message: 'Password must be 6 characters or longer' }
                             })}
                             className="input input-bordered w-full max-w-xs" />
                         {errors.password && <p className='text-red-600 mt-2' role="alert">{errors.password?.message}</p>}
