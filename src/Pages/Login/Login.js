@@ -1,14 +1,29 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGoogle } from "react-icons/fa";
 import { AuthContext } from '../../Context/AuthProvider';
 import toast from 'react-hot-toast';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 const Login = () => {
-    const {userLogin} = useContext(AuthContext)
+    const {userLogin, providerLogin} = useContext(AuthContext)
     const { register,formState: { errors }, handleSubmit} = useForm();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from?.pathname || '/';
+    
+    const googleProvider = new GoogleAuthProvider();
 
+    const handleGoogleLogin = () =>{
+        providerLogin(googleProvider)
+        .then(result =>{
+            const user = result.user;
+            console.log(user);
+            toast.success('Succssfully login')
+            navigate(from, {replace:true})
+        })
+    }
     const handleLogin = data =>{
         // console.log(data);
         userLogin(data.email, data.password)
@@ -16,6 +31,7 @@ const Login = () => {
             const user = result.user;
             console.log(user)
             toast.success('Succussfully login')
+            navigate(from, {replace:true})
         })
         .catch(err =>{
             toast.error(err.message);
@@ -49,7 +65,7 @@ const Login = () => {
                 </form>
                 <p>New to Doctors Portal <Link className='text-secondary' to="/signup">Create new Account</Link></p>
                 <div className="divider">OR</div>
-                <button className='btn btn-outline text-red-500 w-full'><FaGoogle className='inline mr-2 text-red-500'></FaGoogle>CONTINUE WITH GOOGLE</button>
+                <button onClick={handleGoogleLogin} className='btn btn-outline text-red-500 w-full'><FaGoogle className='inline mr-2 text-red-500'></FaGoogle>CONTINUE WITH GOOGLE</button>
             </div>
         </div>
     );
