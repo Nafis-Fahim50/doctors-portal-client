@@ -20,7 +20,9 @@ const Signup = () => {
                 displayName: data.name
             }
             updateUser(userInfo)
-            .then(()=>{})
+            .then(()=>{
+                navigate('/')
+            })
             .catch(err => toast.error(err.message))
         })
         .catch(err =>{
