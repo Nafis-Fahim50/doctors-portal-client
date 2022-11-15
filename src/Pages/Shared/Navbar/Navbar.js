@@ -1,10 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { themeChange } from 'theme-change'
 import { AuthContext } from '../../../Context/AuthProvider';
+import './Navbar.css'
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
+    useEffect(() => {
+        themeChange(false)
+    }, [])
     const menuItems = <>
+     <select className='ml-2' data-choose-theme>
+            <option value="">Light</option>
+            <option value="dark">Dark</option>
+        </select>
         <li><Link to='/'>Home</Link></li>
         <li><Link to='/about'>About</Link></li>
         <li><Link to='/appointment'>Appointment</Link></li>
@@ -20,6 +29,7 @@ const Navbar = () => {
                 :
                 <li><Link className='bg-accent rounded-lg text-white' to='/login'>Login</Link></li>
         }
+       
     </>
     return (
         <div className="navbar bg-base-100">

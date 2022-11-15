@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGoogle } from "react-icons/fa";
@@ -7,8 +7,9 @@ import toast from 'react-hot-toast';
 import { GoogleAuthProvider } from 'firebase/auth';
 
 const Login = () => {
-    const {userLogin, providerLogin} = useContext(AuthContext)
+    const {userLogin, providerLogin, resetPassword} = useContext(AuthContext)
     const { register,formState: { errors }, handleSubmit} = useForm();
+    const [userEmail, setUserEmail] = useState('')
     const location = useLocation();
     const navigate = useNavigate();
     const from = location.state?.from?.pathname || '/';
@@ -32,18 +33,40 @@ const Login = () => {
             console.log(user)
             toast.success('Succussfully login')
             navigate(from, {replace:true})
+            console.log(data.email)
         })
         .catch(err =>{
             toast.error(err.message);
         })
     }
+
+    const hanleBlurEmail = event =>{
+        const email = event.target.value;
+        setUserEmail(email);
+        console.log(email);
+    }
+
+    const handlePasswordReset = () =>{
+        if(!userEmail){
+            toast.error('Please Enter your Email')
+            return
+        }
+        resetPassword(userEmail)
+        .then(()=>{
+            toast.success('Send reset verificatio code')
+        })
+        .catch(err=>{
+            toast.error(err.message)
+        })
+    }
+
     return (
         <div className='h-[600px] flex justify-center items-center'>
             <div className='w-96 p-7  shadow-xl rounded-xl'>
                 <h2 className='text-xl text-center'>Login</h2>
                 <form onSubmit={handleSubmit(handleLogin)}>
-                    <div className="form-control w-full max-w-xs">
-                        <label className="label"> <span className="label-text">Email</span></label>
+                    <div onBlur={hanleBlurEmail} className="form-control w-full max-w-xs">
+                        <label  className="label"> <span className="label-text">Email</span></label>
                         <input type="email"
                             {...register("email", {
                                 required: "Email Address is required"
@@ -59,7 +82,7 @@ const Login = () => {
                             })}
                             className="input input-bordered w-full max-w-xs" />
                         {errors.password && <p className='text-red-600 mt-2' role="alert">{errors.password?.message}</p>}
-                        <label className="label"> <span className="label-text">Forget Password?</span></label> 
+                        <p className='my-2'>Forget Password? <button onClick={handlePasswordReset} type='button' className='btn-link'>Reset Password</button></p>
                     </div>
                     <input className='btn btn-accent w-full' value="Login" type="submit" />
                 </form>
