@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../../Context/AuthProvider';
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment,refetch }) => {
     const { name, slots } = treatment;
     const date = format(selectedDate, 'PP')
     const {user} = useContext(AuthContext);
@@ -36,6 +36,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
         .then(data=>{
             if(data.acknowledged){
                 toast.success('succssfully submit appointment');
+                refetch();
                 setTreatment(null)
             }
         })
