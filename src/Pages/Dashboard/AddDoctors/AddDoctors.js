@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import Loading from '../../Shared/Loading/Loading';
 
 const AddDoctors = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const imageHostingKey = process.env.REACT_APP_imagebbKey;
+    const navigate = useNavigate()
    
     const { data: specialites = [], isLoading } = useQuery({
         queryKey: ['speciality'],
@@ -19,7 +22,7 @@ const AddDoctors = () => {
         const image = data.image[0];
         const formData = new FormData();
         formData.append('image', image);
-        const url = `https://api.imgbb.com/1/upload?expiration=600&key=${imageHostingKey}`
+        const url = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`
         fetch(url,{
             method:'POST',
             body: formData
@@ -27,7 +30,28 @@ const AddDoctors = () => {
         .then(res => res.json())
         .then(imageData =>{
            if(imageData.success){
-                console.log(imageData.data.url)
+            console.log(imageData.data.url);
+               const doctor = {
+                    name: data.name,
+                    email: data.email,
+                    specialty: data.specialty,
+                    image: imageData.data.url
+               }
+               fetch('http://localhost:5000/doctors',{
+                    method:'POST',
+                    headers:{
+                        'content-type':'application/json',
+                        authorization: `bearer ${localStorage.getItem('accessToken')}`
+                    },
+                    body: JSON.stringify(doctor)
+               })
+               .then(res => res.json())
+               .then(data =>{
+                    if(data.acknowledged === true){
+                        toast.success('Successfully added doctor')
+                        navigate('/dashboard/manage-doctors')
+                    }
+               })
            }
         })
     }
