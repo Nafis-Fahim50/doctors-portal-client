@@ -10,7 +10,7 @@ const Navbar = () => {
         themeChange(false)
     }, [])
     const menuItems = <>
-        <select className='ml-2' data-choose-theme>
+        <select data-choose-theme>
             <option value="">Light</option>
             <option value="dark">Dark</option>
         </select>

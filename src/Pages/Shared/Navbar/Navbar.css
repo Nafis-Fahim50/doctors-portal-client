@@ -11,6 +11,13 @@
     --my-color: #ffabc8;
 }
 
+[data-theme='red'] {
+    --my-color: #f53c4b;
+}
+[data-theme='blue'] {
+    --my-color: #1c20f7;
+}
+
 body {
     background-color: var(--my-color);
 }
