@@ -2,12 +2,17 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
+import Loading from '../../Shared/Loading/Loading';
 import Cheakout from './Cheakout';
 
 const stripePromise = loadStripe(process.env.REACT_APP_pk)
 
 const Payment = () => {
     const booking = useLoaderData();
+    const navigation = useLoaderData();
+    if(navigation.state === 'loading'){
+        return <Loading></Loading>
+    }
     const { treatmentName, price, appointmentDate, slot } = booking;
     return (
         <div>
